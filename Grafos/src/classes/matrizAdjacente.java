@@ -4,8 +4,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,18 +18,18 @@ public class matrizAdjacente {
     private int[] grauVertice;
         
     
-    public matrizAdjacente( ){
-        this.vertical=vertical;
-        this.diagonal=diagonal;
+    public matrizAdjacente(){
+        this.vertical=0;
+        this.diagonal=0;
         this.matriz= new int[vertical][diagonal];
         for (int i = 0; i < vertical; i++) {
             for (int j = 0; j < diagonal; j++) {
-                this.matriz[i][j] = matriz[i][j];
+                this.matriz[i][j] = 0;
             }
         }
         this.grauVertice= new int[vertical];
         for(int i=0; i< vertical; i++){
-            this.grauVertice[i]=grauVertice[i];
+            this.grauVertice[i]=0;
         }
     }
     
@@ -107,13 +105,16 @@ public class matrizAdjacente {
         }        
     }
     
+    protected void iniciarMatriz(){
+        matriz = new int[getVertical()][getDiagonal()];
+    }
+    
     public void preencheMatrizAleatoria(){
         tamanhoMatriz();
-        matriz = new int[vertical][diagonal];
-
+        iniciarMatriz();
         
-        for(int i=0;i<vertical;i++){
-            for(int j=0;j<diagonal;j++){
+        for(int i=0;i<getVertical();i++){
+            for(int j=0;j<getDiagonal();j++){
                 if(i>j){
                     setMatriz(i,j,getMatriz(j,i));
                 }else{
@@ -177,8 +178,8 @@ public class matrizAdjacente {
     }
     
     private boolean grafoRegular(){
-        for(int i=0;i<vertical;i++){
-            for(int a=1;a<vertical;a++){
+        for(int i=0;i<getVertical();i++){
+            for(int a=1;a<getVertical();a++){
                 if(grauVertice[i]!=grauVertice[a]){
                     return false;
                 }
@@ -188,8 +189,8 @@ public class matrizAdjacente {
     }
     
     private boolean multiGrafo(){
-     for(int i=0;i<vertical;i++){
-            for(int j=0;j<diagonal;j++){
+     for(int i=0;i<getVertical();i++){
+            for(int j=0;j<getDiagonal();j++){
                 if(getMatriz(i,j)>1){
                     return true;
                 }
@@ -199,8 +200,8 @@ public class matrizAdjacente {
     }
     
     private boolean pseudoGrafo(){
-         for(int i=0;i<vertical;i++){
-            for(int j=0;j<diagonal;j++){
+         for(int i=0;i<getVertical();i++){
+            for(int j=0;j<getDiagonal();j++){
                 if(i==j && getMatriz(i,j)==1){
                     return true;
                 }
@@ -210,9 +211,9 @@ public class matrizAdjacente {
     }
     
     private boolean grafoSimetrico(){
-        for(int i=0;i<vertical;i++){
-            for(int j=0;j<diagonal;j++){
-                if(getMatriz(i,j)!=getMatriz(j,i)){
+        for(int i=0;i<getVertical()/2;i++){
+            for(int j=0;j<getDiagonal()/2;j++){
+                if(getMatriz(i,j)!=getMatriz(i+getVertical()/2,j+getDiagonal()/2)){
                     return false;
                 }
             }
@@ -221,9 +222,9 @@ public class matrizAdjacente {
     }
     
     private boolean grafoConexo(){
-        for(int i=0;i<vertical;i++){
+        for(int i=0;i<getVertical();i++){
             int soma=0;
-                for(int j=0;j<diagonal;j++){
+                for(int j=0;j<getDiagonal();j++){
                     if(i!=j){
                         soma=soma+getMatriz(i,j);
                     }
@@ -236,12 +237,12 @@ public class matrizAdjacente {
     }
     
     private boolean grafoCompleto(){
-        for(int i=0;i<vertical;i++){
+        for(int i=0;i<getVertical();i++){
             int soma=0;
-                for(int j=0;j<diagonal;j++){
+                for(int j=0;j<getDiagonal();j++){
                     soma=soma+getMatriz(i,j);
                 }
-                if(soma!=diagonal-1){
+                if(soma!=getDiagonal()-1){
                     return false;
                 }else if(pseudoGrafo()){
                     return false;
@@ -251,13 +252,13 @@ public class matrizAdjacente {
     }
     
     private int ordemGrafo(){
-        return vertical;
+        return getVertical();
     }
     
     private int tamanhoGrafo(){
         int soma=0;
-        for(int i=0;i<vertical;i++){
-            for(int j=0;j<diagonal;j++){
+        for(int i=0;i<getVertical();i++){
+            for(int j=0;j<getDiagonal();j++){
                 if(i>j || i==j){
                     soma=soma+getMatriz(i,j);
                 }
@@ -267,10 +268,10 @@ public class matrizAdjacente {
     }
     
     private void grauVertice(){
-        grauVertice= new int[diagonal];
-        for(int i=0;i<vertical;i++){
+        grauVertice= new int[getDiagonal()];
+        for(int i=0;i<getVertical();i++){
             int soma=0;
-            for(int j=0;j<diagonal;j++){
+            for(int j=0;j<getDiagonal();j++){
                 soma=soma+getMatriz(i,j);
                 setGrauVertice(i,soma);
                 
@@ -278,9 +279,9 @@ public class matrizAdjacente {
         }
     }
     
-    private void printMatriz() {   
+    protected void printMatriz() {   
         
-        for(int i=0;i<(vertical*2)+6;i++){
+        for(int i=0;i<(getVertical()*2)+6;i++){
             System.out.print("_");
         }
         
@@ -288,7 +289,7 @@ public class matrizAdjacente {
         
         System.out.print("|i-j|");
                 
-        for(int i=0;i<vertical;i++){
+        for(int i=0;i<getVertical();i++){
             int a=i+1;
             System.out.print("|"+ a);
         }
@@ -297,26 +298,24 @@ public class matrizAdjacente {
         
         System.out.println();
         
-        for(int i=0;i<(vertical*2)+6;i++){
+        for(int i=0;i<(getVertical()*2)+6;i++){
             System.out.print("-");
         }
         
         System.out.println();
                     
-        for(int i=0;i<vertical;i++){
+        for(int i=0;i<getVertical();i++){
             int a=i+1;
-            System.out.print("|"+a+"| ");
-            for(int j=0;j<diagonal;j++){
-                System.out.print("|"+matriz[i][j]);
+            System.out.print("|"+a+"|  ");
+            for(int j=0;j<getDiagonal();j++){
+                System.out.print("|"+getMatriz(i,j));
             }
             System.out.println("|");   
        }
-        for(int i=0;i<(vertical*2)+6;i++){
+        for(int i=0;i<(getVertical()*2)+6;i++){
             System.out.print("-");
         }
         System.out.println();
-        
-
     }
     
     private void tamanhoMatriz(){
